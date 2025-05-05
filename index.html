@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Weather App</title>
+    <div class="car"></div>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background-color: #202020;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .card {
+        background: linear-gradient(180deg, #3cb9c4 0%, #415c9b 100%);
+        color: white;
+        padding: 30px;
+        margin: 40px;
+        border-radius: 25px;
+        width: 90%;
+        max-width: 450px;
+        text-align: center;
+      }
+      .search {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .searchBar {
+        height: 60px;
+        width: 82%;
+        padding: 20px;
+        border-radius: 30px;
+        border: none;
+        outline: none;
+        font-size: 18px;
+      }
+      .searchBtn {
+        width: 60px;
+        height: 60px;
+        background-color: #ebfffc;
+        border: none;
+        outline: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.4s;
+      }
+      .searchBtn:hover {
+        background-color: #d4f2f5;
+      }
+      .searchBtn img {
+        width: 14px;
+        height: 15px;
+      }
+      .weatherStatus {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .weatherStatus img {
+        width: 140px;
+        height: 140px;
+        margin: 25px 0;
+      }
+      .weatherStatus h1 {
+        font-weight: 100;
+        font-size: 65px;
+      }
+      .weatherStatus h2 {
+        font-weight: 100;
+        font-size: 40px;
+      }
+      .weatherInfo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 30px 20px 0;
+      }
+      .weatherInfo .col {
+        display: flex;
+        align-items: center;
+        text-align: left;
+      }
+      .weatherInfo img {
+        width: 50px;
+        height: 50px;
+      }
+      .weatherInfo .col div {
+        margin-left: 15px;
+      }
+      .weatherInfo p {
+        font-weight: 100;
+        font-size: 25px;
+        margin: 0;
+      }
+      .weatherInfo h3 {
+        display: block;
+        font-weight: 100;
+        font-size: 15px;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="search">
+        <input type="text" class="searchBar" placeholder="Enter city name" />
+        <button class="searchBtn">
+          <img src="images/search.png" alt="" />
+        </button>
+      </div>
+      <div class="weatherStatus">
+        <img src="images/clouds.png" alt="" />
+        <h1 class="temp"><span>7</span>°C</h1>
+        <h2 class="city">New York</h2>
+      </div>
+      <div class="weatherInfo">
+        <div class="col">
+          <img src="images/humidity.png" alt="" />
+          <div>
+            <p class="humidity"><span>60</span>%</p>
+            <h3>Humidity</h3>
+          </div>
+        </div>
+        <div class="col">
+          <img src="images/wind.png" alt="" />
+          <div>
+            <p class="windSpeed"><span>10</span> km/h</p>
+            <h3>Wind Speed</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function capitalizeWords(str) {
+        return str
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
+
+      let searchBar = document.querySelector(".searchBar");
+      let searchBtn = document.querySelector(".searchBtn");
+      let displayCity = document.querySelector(".city");
+      let tempDeg = document.querySelector(".temp span");
+      let humidityPer = document.querySelector(".humidity span");
+      let weatherImg = document.querySelector(".weatherStatus img");
+      let wind = document.querySelector(".windSpeed span");
+      const apiKey = "ce2876bb738eb52c59ba45afe6de7265";
+      console.log(weatherImg.src);
+
+      searchBtn.addEventListener("click", function () {
+        let cityName = searchBar.value;
+        displayCity.innerHTML = capitalizeWords(cityName);
+        console.log(cityName);
+        async function getweather() {
+          let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${apiKey}`;
+          fetch(apiUrl)
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+
+              console.log(data.weather[0].main);
+              weatherImg.src = `images/${data.weather[0].main}.png`;
+
+              let temprature = data.main.temp;
+              tempDeg.innerHTML = temprature.toFixed(1);
+              console.log(temprature);
+
+              let humidity = data.main.humidity;
+              humidityPer.innerHTML = humidity;
+              console.log(humidity);
+
+              let windSpeed = data.wind.speed * 3.6;
+              wind.innerHTML = windSpeed.toFixed(1);
+              console.log(windSpeed);
+            })
+            .catch((error) => {
+              console.error(error);
+              window.alert(
+                `Couldn't get weather for ${cityName}. Please write correct city.`
+              );
+            });
+        }
+        getweather();
+      });
+    </script>
+  </body>
+</html>
